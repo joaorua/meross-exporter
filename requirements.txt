@@ -1,0 +1,5 @@
+paho-mqtt>=1.5.0
+requests>=2.19.1
+aiohttp[speedups]>=3.7.4.post0
+meross_iot>=0.4.5.0
+aioprometheus>=22.5.0
