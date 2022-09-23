@@ -14,9 +14,9 @@ PASSWORD = os.environ.get('MEROSS_PASSWORD') or "YOUR_MEROSS_CLOUD_PASSWORD"
 async def main():
     service = Service()
         
-    power = Gauge('meross_power', 'watt')
-    voltage = Gauge('meross_voltage', 'volt')
-    current = Gauge('meross_current', 'ampere')
+    power = Gauge('meross_power', 'Electricity watt reading (w)')
+    voltage = Gauge('meross_voltage', 'Electricity voltage reading (v)')
+    current = Gauge('meross_current', 'Electricity ampere reading (a)')
     await service.start(addr="0.0.0.0", port=8000)
     print(f"Serving prometheus metrics on: {service.metrics_url}")
 
@@ -37,10 +37,13 @@ async def main():
         async def updater(p: Gauge, v: Gauge, c: Gauge):
             while True:
                 for dev in plugs:
-                    instant_consumption = await dev.async_get_instant_metrics()
-                    p.set({'device': dev.name},instant_consumption.power)
-                    v.set({'device': dev.name},instant_consumption.voltage)
-                    c.set({'device': dev.name},instant_consumption.current)
+                    try:
+                        instant_consumption = await dev.async_get_instant_metrics()
+                        p.set({'device': dev.name},instant_consumption.power)
+                        v.set({'device': dev.name},instant_consumption.voltage)
+                        c.set({'device': dev.name},instant_consumption.current)
+                    except Exception as e:
+                        print(f"Exception caught: {e}")
                 await asyncio.sleep(10.0)
 
         await updater(power,voltage,current)
