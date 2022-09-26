@@ -44,7 +44,7 @@ async def main():
                         c.set({'device': dev.name},instant_consumption.current)
                     except Exception as e:
                         print(f"Exception caught: {e}")
-                await asyncio.sleep(10.0)
+                await asyncio.sleep(30.0)
 
         await updater(power,voltage,current)
 
