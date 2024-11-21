@@ -9,6 +9,7 @@ from meross_iot.manager import MerossManager
 
 EMAIL = os.environ.get('MEROSS_EMAIL') or "YOUR_MEROSS_CLOUD_EMAIL"
 PASSWORD = os.environ.get('MEROSS_PASSWORD') or "YOUR_MEROSS_CLOUD_PASSWORD"
+MEROSS_API_URL = os.environ.get('MEROSS_API_URL') or "iotx-eu.meross.com"
 
 def _get_today_consumption(daily_consumption_history):
     today_time = datetime.now()
@@ -44,7 +45,11 @@ async def main():
     print(f"Serving prometheus metrics on: {service.metrics_url}")
 
     # Setup the HTTP client API from user-password
-    http_api_client = await MerossHttpClient.async_from_user_password(email=EMAIL, password=PASSWORD)
+    http_api_client = await MerossHttpClient.async_from_user_password(
+        api_base_url=MEROSS_API_URL,
+        email=EMAIL,
+        password=PASSWORD
+    )
 
     # Setup and start the device manager
     manager = MerossManager(http_client=http_api_client)
